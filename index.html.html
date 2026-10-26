@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>birthday 🎂</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@600;700&family=Tajawal:wght@400;500;700&family=Aref+Ruqaa:wght@400;700&display=swap">
+
+<style>
+/* =====================================================
+   1) الألوان — غيّري أي لون من هنا وهيتغير في الموقع كله
+   ===================================================== */
+:root{
+  --night:#58331c;      /* خلفية الصفحة الأولى */
+  --coffee:#4A2C1A;     /* خلفية الصفحة التانية والتالتة (لون القهوة) */
+  --coffee-dark:#33200F;
+  --pink:#FF6B98;       /* لون الأزرار */
+  --gold:#FFC857;
+  --paper:#F6F0E4;      /* لون إطار الصورة والرسالة */
+  --ink:#FFF1F7;        /* لون الكتابة الفاتحة */
+}
+
+/* ---------- إعدادات عامة ---------- */
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:'Tajawal',Tahoma,sans-serif;color:var(--ink);text-align:center;overflow-x:hidden}
+h1,h2{font-family:'Reem Kufi','Tajawal',serif;margin:0;line-height:1.3}
+
+/* كل صفحة = section. الصفحة اللي عليها كلمة active بس هي اللي بتظهر */
+.page{display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px 16px}
+.page.active{display:flex;animation:fade .6s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+
+#page1{background:radial-gradient(circle at 50% 30%,#a49f79,var(--night) 70%)}
+#page2,#page3{background:radial-gradient(circle at 50% 40%,#5b3720,var(--coffee-dark) 85%)}
+
+/* ---------- الأزرار ---------- */
+button{font:inherit;font-weight:700;font-size:18px;padding:12px 26px;border:0;border-radius:14px;background:var(--pink);color:#fff;cursor:pointer}
+button:disabled{opacity:.6;cursor:default}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+
+/* ---------- الصفحة 1: التورتة ---------- */
+#cake{width:min(300px,75vw);height:auto;overflow:visible}
+.flame{transform-box:fill-box;transform-origin:50% 100%;animation:flick .5s infinite alternate;transition:opacity .4s,transform .4s}
+@keyframes flick{from{transform:scale(1,1) rotate(-3deg)}to{transform:scale(.88,1.12) rotate(3deg)}}
+.out .flame{opacity:0;transform:scale(.2);animation:none}   /* لما الشموع تطفي */
+
+/* العداد */
+.count{background:rgba(255,255,255,.08);border-radius:18px;padding:12px 26px}
+.count small{display:block;color:#D9BEEA;font-size:16px}
+#hours{font-family:'Reem Kufi',serif;font-size:clamp(40px,12vw,64px);color:var(--gold);line-height:1.2}
+#rest{color:#D9BEEA;font-size:16px}
+
+/* البلالين */
+.balloon{position:fixed;bottom:-130px;width:56px;height:70px;border-radius:50% 50% 48% 48%;animation:up linear forwards;z-index:5;pointer-events:none}
+.balloon::after{content:"";position:absolute;top:100%;left:50%;width:1.5px;height:45px;background:rgba(255,255,255,.6)}
+@keyframes up{to{transform:translateY(-130vh) translateX(30px)}}
+
+/* ---------- الصفحة 2: الصور ---------- */
+.stage{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:24px;width:100%;max-width:980px}
+.side{display:flex;flex-direction:column;gap:26px}      /* عمود صورتين (يمين / شمال) */
+.mid{display:flex;flex-direction:column;gap:16px;align-items:center;min-width:220px}
+
+/* كارت الصورة (زي كاميرا البولارويد القديمة) */
+.polaroid{width:170px;background:var(--paper);padding:10px 10px 12px;border-radius:3px;box-shadow:0 8px 20px rgba(0,0,0,.45);color:#3a2a1a;position:relative;cursor:pointer;transition:transform .9s cubic-bezier(.2,.9,.3,1.15)}
+.polaroid:nth-child(odd){transform:rotate(-4deg)}
+.polaroid:nth-child(even){transform:rotate(3deg)}
+.polaroid:hover{transform:rotate(0) scale(1.04)}
+.photo{aspect-ratio:1;background:linear-gradient(135deg,#c9a77c,#8a5a38);display:flex;align-items:center;justify-content:center;font-size:40px;overflow:hidden}
+.photo img{width:100%;height:100%;object-fit:cover;display:block}
+.cap{font-family:'Aref Ruqaa',serif;font-size:19px;margin-top:8px;min-height:1.4em}
+@media(max-width:640px){
+  .side{flex-direction:row;gap:14px}
+  .polaroid{width:calc(50vw - 30px);max-width:170px}
+  .mid{order:-1}
+}
+
+/* ---------- الصفحة 3: الرسالة ---------- */
+.letter{display:none;background:var(--paper);color:#3a2a1a;max-width:560px;padding:28px 26px;border-radius:6px;box-shadow:0 10px 26px rgba(0,0,0,.5);font-family:'Aref Ruqaa',serif;font-size:22px;line-height:2;text-align:right}
+.letter p{margin:0 0 10px}
+.sign{text-align:left;font-weight:700}
+
+/* ---------- تلميح بيرمش ("دوسي على...") ---------- */
+.hint{margin:0;font-size:19px;color:var(--gold);animation:pulse 1.4s infinite alternate}
+@keyframes pulse{to{opacity:.35}}
+
+/* العنوان والزرار في نص الصفحة التانية: مخفيين لحد ما الصور تتفرق */
+.mid{transition:opacity .6s}
+.mid.hide{opacity:0;pointer-events:none}
+
+/* الخلفية المعتمة وقت تكبير الصورة */
+#dim{position:fixed;inset:0;background:rgba(0,0,0,.65);opacity:0;pointer-events:none;transition:opacity .4s;z-index:9}
+#dim.on{opacity:1;pointer-events:auto}
+
+/* ---------- الظرف (الصفحة 3) ---------- */
+.envelope{position:relative;width:min(300px,80vw);height:200px;cursor:pointer;perspective:900px;filter:drop-shadow(0 10px 18px rgba(0,0,0,.5))}
+.env-body{position:absolute;inset:0;background:#C9A77C;border-radius:6px}
+.env-front{position:absolute;inset:0;background:#B8905F;border-radius:6px;clip-path:polygon(0 0,50% 55%,100% 0,100% 100%,0 100%)}
+.flap{position:absolute;top:0;left:0;width:100%;height:55%;background:#D9B98C;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .7s}
+.seal{position:absolute;top:55%;left:50%;transform:translate(-50%,-50%);font-size:30px;transition:opacity .3s}
+.envelope.open .flap{transform:rotateX(180deg)}      /* الغطا بيتفتح */
+.envelope.open .seal{opacity:0}
+.envelope.gone{display:none}                         /* الظرف بيختفي والرسالة تظهر */
+.letter.show{display:block;animation:letterIn .9s cubic-bezier(.2,.9,.3,1.1)}
+@keyframes letterIn{from{opacity:0;transform:translateY(60px) scale(.6)}to{opacity:1;transform:none}}
+</style>
+</head>
+
+<body>
+
+<!-- =========================================
+     الصفحة 1: التورتة + العداد + الزرار
+     ========================================= -->
+<section class="page active" id="page1">
+  <h1 id="title"></h1>
+
+  <svg id="cake" viewBox="0 0 320 300" role="img" aria-label="تورتة عليها شموع">
+    <ellipse cx="160" cy="278" rx="140" ry="14" fill="#3B1D55"/>
+    <rect x="50" y="190" width="220" height="82" rx="14" fill="#FF6B98"/>
+    <rect x="70" y="130" width="180" height="66" rx="14" fill="#F7B6CF"/>
+    <path d="M70 150 q15 22 30 0 q15 22 30 0 q15 22 30 0 q15 22 30 0 q15 22 30 0 q15 22 30 0 V138 H70Z" fill="#fff"/>
+    <g id="candles"></g><!-- الشموع بتتعمل بالجافاسكريبت تحت -->
+  </svg>
+
+  <div class="count">
+    <small id="countLabel">فاضل على عيد ميلادك</small>
+    <div id="hours"></div>
+    <div id="rest"></div>
+  </div>
+
+  <button id="blowBtn"></button>
+</section>
+
+<!-- =========================================
+     الصفحة 2: أربع صور (اتنين يمين واتنين شمال)
+     ========================================= -->
+<section class="page" id="page2">
+  <div class="stage">
+    <div class="side" id="rightPhotos"></div>   <!-- عمود اليمين -->
+    <div class="mid" id="mid">
+      <h2 id="galleryTitle"></h2>
+      <button id="toLetter"></button>
+    </div>
+    <div class="side" id="leftPhotos"></div>    <!-- عمود الشمال -->
+  </div>
+  <p class="hint" id="hint">دوسي على الصور عشان تتفرق 📸</p>
+</section>
+
+<!-- =========================================
+     الصفحة 3: الرسالة
+     ========================================= -->
+<div id="dim"></div><!-- خلفية معتمة بتظهر ورا الصورة المكبّرة -->
+
+<section class="page" id="page3">
+  <h2 id="letterTitle"></h2>
+  <!-- الظرف: بيتفتح لما تدوسي عليه، وبعدين بتظهر الرسالة -->
+  <div class="envelope" id="envelope" role="button" aria-label="افتحي الرسالة">
+    <div class="env-body"></div>
+    <div class="env-front"></div>
+    <div class="flap"></div>
+    <div class="seal">❤️</div>
+  </div>
+  <p class="hint" id="envHint">دوسي على الظرف عشان تفتحيه 💌</p>
+
+  <div class="letter" id="letter"></div>
+  <button id="restart" hidden></button>
+</section>
+
+
+<script>
+/* =====================================================
+   2) الإعدادات — ده المكان الوحيد اللي محتاجة تعدلي فيه
+   ===================================================== */
+const CONFIG = {
+  name: "ستيييي",                          // اسم أختك
+  birthday: { month: 11, day: 8 },       // تاريخ عيد الميلاد: 9 نوفمبر
+  candles: 5,                            // عدد الشموع
+
+  // نصوص الصفحة الأولى
+  title: "كل سنة وإنتِ طيبة",
+  blowButton: "اضغطي هنا علشان تهوفي الشمع🕯️",
+  todayText: "النهارده عيد ميلادك! 🎉",
+
+  // الصور: اكتبي اسم الصورة (حطيها في نفس فولدر الملف) واكتبي تحتها كلمتين
+  // لو الصورة مش موجودة هتظهر 📷 مكانها، وتقدري تدوسي على الكارت وتختاري صورة من جهازك
+  photos: [
+    { src: "photo1.jpg", caption: "MY GRAND MAAAA" },
+    { src: "photo2.jpg", caption: "الدقتوورههه" },
+    { src: "photo3.jpg", caption: "ستيي تمت ال 25" },
+    { src: "photo4.jpg", caption: "عقبالللل1000000سنهه" },
+  ],
+  galleryTitle: "MEMORYY📸",
+  toLetterButton: "كمّلي يا ستي 💌",
+
+  // الصفحة التالتة: الرسالة (كل سطر بين علامتين تنصيص = فقرة)
+  letterTitle: "MASSAGE💖",
+  letter: [
+    ".كل سنه وانتي طيبه يا ستي وعقبال 100 سنه يارب في نجاح ",
+    "وتكوني دكتوره قد الدنيا وتفضلي ستي واختي الكبيره.",
+    "ملحوظه:يا رب تلاقي جدي المستقبلي السنه ديي.",
+  ],
+  signature: "حفيدكك❤️",
+  restartButton: "من الأول 🔁",
+};
+
+/* =====================================================
+   3) باقي الكود — بيقرا الإعدادات اللي فوق ويشغّل الموقع
+   ===================================================== */
+const $ = id => document.getElementById(id);   // اختصار لجلب أي عنصر بالـ id
+
+/* ----- التنقل بين الصفحات: بنشيل active من الكل ونحطها على الصفحة المطلوبة ----- */
+function goTo(id){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  $(id).classList.add('active');
+  window.scrollTo(0,0);
+  if (id === 'page2') stackPhotos();     // كل مرة ندخل الصفحة التانية الصور تتجمع الأول
+}
+
+/* ----- كتابة النصوص من الإعدادات ----- */
+$('title').textContent = `${CONFIG.title} يا ${CONFIG.name} 🎉`;
+$('blowBtn').textContent = CONFIG.blowButton;
+$('galleryTitle').textContent = CONFIG.galleryTitle;
+$('toLetter').textContent = CONFIG.toLetterButton;
+$('letterTitle').textContent = CONFIG.letterTitle;
+$('restart').textContent = CONFIG.restartButton;
+$('letter').innerHTML = CONFIG.letter.map(t => `<p>${t}</p>`).join('') +
+                        `<p class="sign">${CONFIG.signature}</p>`;
+
+/* ----- رسم الشموع ----- */
+const colors = ['#5EC8E5','#FFC857','#7BD88F','#FF9A5C','#B28DFF'];
+const gap = 140 / (CONFIG.candles - 1 || 1);
+for (let i = 0; i < CONFIG.candles; i++){
+  const x = CONFIG.candles === 1 ? 160 : 90 + i * gap;
+  $('candles').insertAdjacentHTML('beforeend', `
+    <rect x="${x-5}" y="92" width="10" height="40" rx="3" fill="${colors[i % colors.length]}"/>
+    <path class="flame" d="M${x} 66 q9 14 0 24 q-9 -10 0 -24Z" fill="#FFC857"/>`);
+}
+
+/* ----- العداد التنازلي بالساعات ----- */
+function nextBirthday(){
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  let t = new Date(now.getFullYear(), CONFIG.birthday.month - 1, CONFIG.birthday.day);
+  if (t < today) t.setFullYear(t.getFullYear() + 1);   // لو عدّى السنة دي، بنحسب للسنة الجاية
+  return t;
+}
+const ar = n => n.toLocaleString('ar-EG');            // أرقام عربي
+function tick(){
+  const now = new Date(), t = nextBirthday();
+  if (t.toDateString() === now.toDateString()){        // النهارده هو اليوم
+    $('countLabel').textContent = '';
+    $('hours').textContent = CONFIG.todayText;
+    $('rest').textContent = '';
+    return;
+  }
+  const diff = t - now;
+  const h = Math.floor(diff / 36e5);                   // عدد الساعات
+  const m = Math.floor(diff % 36e5 / 6e4);             // الدقايق
+  const s = Math.floor(diff % 6e4 / 1e3);              // الثواني
+  $('hours').textContent = `${ar(h)} ساعة`;
+  $('rest').textContent = `و ${ar(m)} دقيقة و ${ar(s)} ثانية`;
+}
+tick(); setInterval(tick, 1000);
+
+/* ----- زرار الشموع: تطفي + بلالين + الصفحة التانية ----- */
+function balloons(){
+  const cols = ['#FF6B98','#FFC857','#5EC8E5','#7BD88F','#B28DFF','#FF9A5C'];
+  for (let i = 0; i < 22; i++){
+    const b = document.createElement('div');
+    b.className = 'balloon';
+    b.style.left = Math.random() * 92 + 'vw';
+    b.style.background = cols[i % cols.length];
+    b.style.animationDuration = 3 + Math.random() * 2.5 + 's';
+    b.style.animationDelay = Math.random() * 0.8 + 's';
+    document.body.appendChild(b);
+    setTimeout(() => b.remove(), 7000);
+  }
+}
+$('blowBtn').addEventListener('click', () => {
+  $('blowBtn').disabled = true;
+  $('cake').classList.add('out');       // الشموع تطفي (CSS)
+  balloons();
+  setTimeout(() => goTo('page2'), 3200); // بعد 3.2 ثانية نروح للصفحة التانية
+});
+
+/* ----- الصفحة 2: عمل كروت الصور ----- */
+const cards = [];        // كل كروت الصور
+let spread = false;      // هل الصور اتفرقت ولا لسه متجمعة؟
+
+/* تجميع الصور فوق بعض في نص الصفحة */
+function stackPhotos(){
+  spread = false;
+  unzoom();                                // لو في صورة مكبّرة نرجّعها
+  $('mid').classList.add('hide');          // نخفي العنوان والزرار لحد ما الصور تتفرق
+  $('hint').style.display = '';
+  const s = document.querySelector('#page2 .stage').getBoundingClientRect();
+  const cx = s.left + s.width / 2, cy = s.top + s.height / 2;   // نص الصفحة
+  cards.forEach((c, i) => {
+    c.style.transition = 'none';
+    c.style.transitionDelay = '0s';
+    c.style.transform = '';                // نرجّعها مكانها الأصلي عشان نقيس صح
+    const r = c.getBoundingClientRect();
+    const dx = cx - (r.left + r.width / 2);   // المسافة اللي هتتحركها لنص الصفحة
+    const dy = cy - (r.top + r.height / 2);
+    const rot = [-9, 6, -3, 10][i % 4];       // ميلان كل صورة وهي متجمعة
+    c.style.zIndex = i;
+    c.style.transform = `translate(${dx}px, ${dy}px) rotate(${rot}deg)`;
+    void c.offsetWidth;                    // بنجبر المتصفح يطبّق الحركة فورًا
+    c.style.transition = '';
+  });
+}
+
+/* تفريق الصور لمكانها (اتنين يمين واتنين شمال) */
+function spreadPhotos(){
+  spread = true;
+  cards.forEach((c, i) => {
+    c.style.transitionDelay = i * 0.12 + 's';   // كل صورة تتحرك بعد اللي قبلها
+    c.style.transform = '';                     // بنشيل الإزاحة فترجع لمكانها
+  });
+  $('hint').style.display = 'none';
+  setTimeout(() => $('mid').classList.remove('hide'), 700);   // يظهر العنوان والزرار
+  setTimeout(() => cards.forEach(c => { c.style.transitionDelay = '0s'; c.style.zIndex = ''; }), 1600);
+}
+
+CONFIG.photos.forEach((p, i) => {
+  const card = document.createElement('div');
+  card.className = 'polaroid';
+  card.innerHTML = `<div class="photo">📷</div><div class="cap">${p.caption}</div>`;
+  const box = card.querySelector('.photo');
+  const img = new Image();
+  img.onload = () => { box.textContent = ''; box.appendChild(img); };  // لو الصورة اتحملت نحطها
+  img.src = p.src;
+  cards.push(card);
+  card.addEventListener('click', () => {
+    if (!spread) { spreadPhotos(); return; }     // أول ضغطة: الصور تتفرق
+    zoomed === card ? unzoom() : zoomIn(card);   // بعد كده: تكبير / رجوع
+  });
+  // أول صورتين في اليمين، والتانيين في الشمال
+  $(i < 2 ? 'rightPhotos' : 'leftPhotos').appendChild(card);
+});
+/* ----- تكبير الصورة بإطارها، وضغطة تانية ترجّعها ----- */
+let zoomed = null;                      // الكارت المكبّر دلوقتي (لو في)
+
+function unzoom(){                      // رجوع الصورة لمكانها
+  if (!zoomed) return;
+  zoomed.style.transform = '';          // بنشيل الإزاحة والتكبير فترجع لمكانها
+  zoomed.style.zIndex = '';
+  zoomed = null;
+  $('dim').classList.remove('on');      // نشيل الخلفية المعتمة
+}
+
+function zoomIn(c){                     // تكبير الصورة في نص الشاشة
+  unzoom();
+  const r = c.getBoundingClientRect();
+  const dx = innerWidth / 2 - (r.left + r.width / 2);     // المسافة لنص الشاشة
+  const dy = innerHeight / 2 - (r.top + r.height / 2);
+  // نسبة التكبير: على قد ما الشاشة تسمح، وأقصى حاجة 3 أضعاف (غيّري الرقم 3 لو عاوزة)
+  const k = Math.min(innerWidth * 0.9 / c.offsetWidth, innerHeight * 0.85 / c.offsetHeight, 3);
+  c.style.zIndex = 10;
+  c.style.transform = `translate(${dx}px, ${dy}px) scale(${k})`;
+  zoomed = c;
+  $('dim').classList.add('on');
+}
+$('dim').addEventListener('click', unzoom);   // الضغط على الخلفية كمان يرجّع الصورة
+
+/* ----- أزرار الانتقال ----- */
+$('toLetter').addEventListener('click', () => goTo('page3'));
+
+/* فتح الظرف: الغطا يتفتح، وبعد ثانية الظرف يختفي والرسالة تظهر */
+$('envelope').addEventListener('click', () => {
+  const env = $('envelope');
+  if (env.classList.contains('open')) return;
+  env.classList.add('open');
+  setTimeout(() => {
+    env.classList.add('gone');
+    $('envHint').style.display = 'none';
+    $('letter').classList.add('show');
+    $('restart').hidden = false;
+  }, 1000);
+});
+
+$('restart').addEventListener('click', () => {
+  $('envelope').classList.remove('open', 'gone');     // نقفل الظرف تاني
+  $('letter').classList.remove('show');
+  $('envHint').style.display = '';
+  $('restart').hidden = true;
+  $('cake').classList.remove('out');
+  $('blowBtn').disabled = false;
+  goTo('page1');
+});
+</script>
+</body>
+</html>
